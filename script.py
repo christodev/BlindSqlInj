@@ -8,6 +8,7 @@ import os
 def clear():
 	os.system('clear')
 
+"Method to get an ordered set of ASCII characters" 
 def GetOrderedASCIIChars():
 	candidateChars = string.punctuation + string.digits + string.ascii_letters + string.whitespace
 	candidateChars = list(candidateChars)
