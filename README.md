@@ -1,9 +1,9 @@
 # BlindSqlInj
 This repo is about a tool I had the opportunity to develop when I was pentesting a website.
 
-In this repo you can find 2 scripts:
-1- script.py
-2- script_neat.py
+In this repo you can find 2 scripts:  
+1- script.py  
+2- script_neat.py  
 
 In the first file, you can see all possible codes (I included multiple possibilities) to extract database info, tables, columns and values by exploiting a Blind SQL Injection vulnerability.
 
